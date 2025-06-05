@@ -1,6 +1,5 @@
 package com.eamcode.RunAnalyzer.controller;
 
-import com.eamcode.RunAnalyzer.model.Report;
 import com.eamcode.RunAnalyzer.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,11 @@ public class ReportController {
     private final ReportService reportService;
 
     @PostMapping
-    public ResponseEntity<Report> createReport(@RequestParam String path) throws IOException {
-        return ResponseEntity.ok(reportService.createReport(path));
+    public ResponseEntity<?> createReport(@RequestParam String path)  {
+        try {
+            return ResponseEntity.ok(reportService.createReport(path));
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("File not found.");
+        }
     }
 }
