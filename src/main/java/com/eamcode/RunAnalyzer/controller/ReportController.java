@@ -2,9 +2,7 @@ package com.eamcode.RunAnalyzer.controller;
 
 import com.eamcode.RunAnalyzer.model.Report;
 import com.eamcode.RunAnalyzer.service.ReportService;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.annotation.RequiredTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

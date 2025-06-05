@@ -2,7 +2,6 @@ package com.eamcode.RunAnalyzer.util;
 
 import com.eamcode.RunAnalyzer.model.MetaData;
 import com.eamcode.RunAnalyzer.model.Report;
-import com.eamcode.RunAnalyzer.repository.MetaDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +13,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class FileUtil {
-    
-    private  final MetaDataRepository metaDataRepository;
 
-    public  MetaData createReportFromCsv(Report report, String path) throws IOException {
+    public  MetaData getMetaDataFromCSV(String path) throws IOException {
         MetaData data = new MetaData();
         List<String> allLines = Files.readAllLines(Path.of(path));
 
