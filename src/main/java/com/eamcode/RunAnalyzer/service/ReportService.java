@@ -22,4 +22,8 @@ public class ReportService {
         report.setPath(path);
         return reportRepository.save(report);
     }
+
+//    public StringBuilder showData(String path) throws IOException {
+//        return fileUtil.getDataRowsFromCsv(path);
+//    }
 }
