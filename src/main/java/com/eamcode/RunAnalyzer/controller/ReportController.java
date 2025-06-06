@@ -26,13 +26,6 @@ public class ReportController {
         }
     }
 
-//    @GetMapping
-//    public ResponseEntity<StringBuilder> showData(@RequestParam String path) throws IOException {
-//        StringBuilder sb = reportService.showData(path);
-//        return ResponseEntity.ok(sb);
-//    }
-
-
     @GetMapping("/analyzer")
     public ResponseEntity<Analyzer> analyze(@RequestParam String path) throws IOException {
         Analyzer analyzer = analyzerService.getAnalysis(path);
