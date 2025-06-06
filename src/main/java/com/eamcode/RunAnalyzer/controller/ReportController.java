@@ -26,9 +26,9 @@ public class ReportController {
         }
     }
 
-    @GetMapping("/analyzer")
-    public ResponseEntity<Analyzer> analyze(@RequestParam String path) throws IOException {
-        Analyzer analyzer = analyzerService.getAnalysis(path);
+    @GetMapping("{reportId}/analyzer")
+    public ResponseEntity<Analyzer> analyze(@PathVariable Long reportId) throws IOException {
+        Analyzer analyzer = analyzerService.getAnalysis(reportId);
         return ResponseEntity.ok(analyzer);
     }
 }

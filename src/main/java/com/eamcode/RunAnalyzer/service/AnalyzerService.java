@@ -2,10 +2,13 @@ package com.eamcode.RunAnalyzer.service;
 
 import com.eamcode.RunAnalyzer.model.Analyzer;
 import com.eamcode.RunAnalyzer.model.DataRow;
+import com.eamcode.RunAnalyzer.model.Report;
+import com.eamcode.RunAnalyzer.repository.ReportRepository;
 import com.eamcode.RunAnalyzer.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +18,13 @@ import java.util.List;
 public class AnalyzerService {
 
     private final FileUtil fileUtil;
+    private final ReportRepository reportRepository;
 
-    public Analyzer getAnalysis(String path) throws IOException {
+    public Analyzer getAnalysis(Long reportId) throws IOException {
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new FileNotFoundException("No report found"));
         Analyzer analyzer = new Analyzer();
-        analyzer.setDataRows(fileUtil.getDataRowsFromCsv(path));
+        analyzer.setDataRows(fileUtil.getDataRowsFromCsv(report.getPath()));
         List<Double> averageSpeeds = getAllSpeeds(analyzer.getDataRows());
         analyzer.setSpeeds(averageSpeeds);
         return analyzer;

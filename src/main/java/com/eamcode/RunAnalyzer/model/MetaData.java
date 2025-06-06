@@ -7,6 +7,7 @@ import java.time.LocalTime;
 
 @Entity
 @Data
+@Table(name = "meta_data")
 public class MetaData {
 
     @Id
