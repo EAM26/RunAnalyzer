@@ -19,4 +19,13 @@ public class PhaseController {
         return ResponseEntity.ok(phaseService.createPhase(request));
     }
 
+    @PostMapping("/multi")
+    public ResponseEntity<Void> addMultiPhase(@RequestParam int multiplier, @RequestParam Long reportId,
+                                                @RequestParam String name1, @RequestParam String name2,
+                                                @RequestParam String duration1, @RequestParam String duration2) {
+        phaseService.createMultiPhase(multiplier, reportId, name1, name2, duration1, duration2);
+        return ResponseEntity.ok().build();
+    }
+
+
 }

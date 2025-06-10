@@ -25,10 +25,16 @@ public class Phase {
     private LocalTime stopTime;
     private String category;
     private Double distance;
+    private Double speed;
 
     @JsonProperty("distance")
     public String getFormattedDistance() {
         return String.format("%.2f", distance);
+    }
+
+    @JsonProperty("speed")
+    public String getFormattedSpeed() {
+        return String.format("%.2f", speed);
     }
 
 }

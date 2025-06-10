@@ -3,7 +3,7 @@ package com.eamcode.RunAnalyzer.service;
 import com.eamcode.RunAnalyzer.dto.ReportResponse;
 import com.eamcode.RunAnalyzer.model.Report;
 import com.eamcode.RunAnalyzer.repository.ReportRepository;
-import com.eamcode.RunAnalyzer.util.FileUtil;
+import com.eamcode.RunAnalyzer.util.CsvUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +16,14 @@ import java.util.Optional;
 public class ReportService {
 
     private final ReportRepository reportRepository;
-    private final FileUtil fileUtil;
+    private final CsvUtil csvUtil;
     private final AnalyzerService analyzerService;
 
     public Report createReport(String path) throws IOException {
         Report report = new Report();
 
 //        MetaData
-        report.setMetaData(fileUtil.getMetaDataFromCSV(path));
+        report.setMetaData(csvUtil.getMetaDataFromCSV(path));
         report.setName(report.getMetaData().getDate());
         report.setPath(path);
 
