@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -17,8 +20,11 @@ public class Report {
     private String name;
     private String path;
 
+    @OneToMany(mappedBy = "report")
+    private List<Phase> phases = new ArrayList<>();
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "metadata_id", referencedColumnName = "id") // metadata_id komt in tabel report
+    @JoinColumn(name = "metadata_id", referencedColumnName = "id")
     private MetaData metaData;
 
 }

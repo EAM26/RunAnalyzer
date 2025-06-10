@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalTime;
 import java.util.List;
 
 @Component
@@ -34,7 +35,7 @@ public class FileUtil {
                 case "Name" -> metaData.setName(value);
                 case "Sport" -> metaData.setSport(value);
                 case "Date" -> metaData.setDate(value);
-                case "Duration" -> metaData.setDuration(value);
+                case "Duration" -> metaData.setDuration(LocalTime.parse(value));
                 case "Total distance (km)" -> metaData.setTotalDistance(value);
                 case "Average heart rate (bpm)" -> metaData.setHeartRateAvg(value);
             }
