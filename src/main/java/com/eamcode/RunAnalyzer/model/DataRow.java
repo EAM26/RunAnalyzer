@@ -16,6 +16,6 @@ public class DataRow {
     @CsvBindByName(column = "HR (bpm)")
     private String heartRate;
     @CsvBindByName(column = "Distances (m)")
-    private String distance;
+    private Double distance;
 
 }

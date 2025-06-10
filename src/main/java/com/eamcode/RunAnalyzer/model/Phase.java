@@ -2,6 +2,7 @@ package com.eamcode.RunAnalyzer.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,8 +21,14 @@ public class Phase {
     @JsonIgnore
     private Report report;
 
-    private LocalTime start;
-    private LocalTime stop;
+    private LocalTime startTime;
+    private LocalTime stopTime;
     private String category;
     private Double distance;
+
+    @JsonProperty("distance")
+    public String getFormattedDistance() {
+        return String.format("%.2f", distance);
+    }
+
 }

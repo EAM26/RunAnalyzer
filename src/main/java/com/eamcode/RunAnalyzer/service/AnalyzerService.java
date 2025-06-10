@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,30 +25,50 @@ public class AnalyzerService {
     private final PhaseRepository phaseRepository;
 
     public void getAnalysis(Report report) throws IOException {
-//        Report report = reportRepository.findById(reportId)
-//                .orElseThrow(() -> new FileNotFoundException("No report found"));
         Analyzer analyzer = new Analyzer();
         analyzer.setDataRows(fileUtil.getDataRowsFromCsv(report.getPath()));
         for(Phase phase: report.getPhases()) {
-            System.out.println("in get analysis call to distance");
-            Double distance = getDistanceByPhase(analyzer, phase);
-            phase.setDistance(distance);
-
+            double startDistance = getDistanceOfTime(analyzer, phase.getStartTime());
+            double endDistance = getDistanceOfTime(analyzer, phase.getStopTime());
+            phase.setDistance(endDistance - startDistance);
             phaseRepository.save(phase);
         }
+//        getDistanceByPhase(analyzer, report.getPhases());
+//        for(Phase phase: report.getPhases()) {
+//            System.out.println("in get analysis call to distance");
+//            Double distance = getDistanceByPhase(analyzer, );
+//            phase.setDistance(distance);
+//
+//            phaseRepository.save(phase);
+//        }
     }
 
-    private Double getDistanceByPhase(Analyzer analyzer, Phase phase) {
-        System.out.println("Get distance by phase method running");
-        for (DataRow dataRow : analyzer.getDataRows()) {
-            if (dataRow.getTime().equals(phase.getStop())) {
-                System.out.println("***********");
-                System.out.println("***********");
-                return Double.parseDouble(dataRow.getDistance());
-            }
-        }
-        return null;
+    private double getDistanceOfTime(Analyzer analyzer, LocalTime time) {
+        return analyzer.getDataRows()
+                .stream()
+                .filter(item -> item.getTime().equals(time))
+                .map(DataRow::getDistance)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No value found for time: "));
     }
+
+
+//    private void getDistanceByPhase(Analyzer analyzer, List<Phase> phases) {
+//        Phase previous = null;
+//        for (Phase phase: phases) {
+//            for (DataRow dataRow : analyzer.getDataRows()) {
+//                if (dataRow.getTime().equals(phase.getStop()) && previous != null) {
+//                    phase.setDistance(Double.parseDouble(dataRow.getDistance()) - previous.getDistance());
+//                    phaseRepository.save(phase);
+//                }
+//                if(dataRow.getTime().equals(phase.getStop())) {
+//                    phase.setDistance(Double.parseDouble(dataRow.getDistance()));
+//                    phaseRepository.save(phase);
+//                }
+//            }
+//            previous = phase;
+//        }
+//    }
 
 
     private List<Double> getAllSpeeds(List<DataRow> dataRowList) {

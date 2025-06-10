@@ -32,3 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 /src/main/resources/data.sql
+/src/main/resources/test-data/run_data_28_05_2025.CSV
+/src/main/resources/test-data/run_data_09_06_2025.CSV
+/src/main/resources/test-data/run_data_09_06_2025.CSV
