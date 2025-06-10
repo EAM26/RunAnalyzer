@@ -6,7 +6,7 @@ import com.eamcode.RunAnalyzer.model.Phase;
 import com.eamcode.RunAnalyzer.model.Report;
 import com.eamcode.RunAnalyzer.repository.PhaseRepository;
 import com.eamcode.RunAnalyzer.repository.ReportRepository;
-import com.eamcode.RunAnalyzer.util.FileUtil;
+import com.eamcode.RunAnalyzer.util.CsvUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +20,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnalyzerService {
 
-    private final FileUtil fileUtil;
+    private final CsvUtil csvUtil;
     private final ReportRepository reportRepository;
     private final PhaseRepository phaseRepository;
 
     public void getAnalysis(Report report) throws IOException {
         Analyzer analyzer = new Analyzer();
-        analyzer.setDataRows(fileUtil.getDataRowsFromCsv(report.getPath()));
+        analyzer.setDataRows(csvUtil.getDataRowsFromCsv(report.getPath()));
         for(Phase phase: report.getPhases()) {
             double startDistance = getDistanceOfTime(analyzer, phase.getStartTime());
             double endDistance = getDistanceOfTime(analyzer, phase.getStopTime());

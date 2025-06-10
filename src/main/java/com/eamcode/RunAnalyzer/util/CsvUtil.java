@@ -16,7 +16,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class FileUtil {
+public class CsvUtil {
 
 
     public MetaData getMetaDataFromCSV(String path) throws IOException {
