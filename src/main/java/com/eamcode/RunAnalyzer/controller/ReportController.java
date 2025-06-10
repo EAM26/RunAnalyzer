@@ -33,9 +33,14 @@ public class ReportController {
         }
     }
 
-    @GetMapping("{reportId}/analyzer")
-    public ResponseEntity<Analyzer> analyze(@PathVariable Long reportId) throws IOException {
-        Analyzer analyzer = analyzerService.getAnalysis(reportId);
-        return ResponseEntity.ok(analyzer);
+    @GetMapping("/{id}")
+    public ResponseEntity<ReportResponse> getReport(@PathVariable Long id) throws IOException {
+        return ResponseEntity.ok(reportService.getSingleReport(id));
     }
+
+//    @GetMapping("/analyzer/{reportId}")
+//    public ResponseEntity<Analyzer> analyze(@PathVariable Long reportId) throws IOException {
+//        Analyzer analyzer = analyzerService.getAnalysis(reportId);
+//        return ResponseEntity.ok(analyzer);
+//    }
 }

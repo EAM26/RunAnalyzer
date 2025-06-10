@@ -12,6 +12,6 @@ public class ReportResponse {
     private Long id;
     private String name;
     private String path;
-    private List<Phase> phasesInterval;
+    private List<Phase> phases;
     private MetaData metaData;
 }

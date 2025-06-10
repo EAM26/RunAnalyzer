@@ -7,8 +7,7 @@ import java.util.List;
 @Data
 public class Analyzer {
 
-    private List<DataRow> dataRows;
-    private List<Double> speeds;
+    private List<DataRow> dataRows;;
 
 
 

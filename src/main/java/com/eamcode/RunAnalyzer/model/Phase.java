@@ -1,5 +1,7 @@
 package com.eamcode.RunAnalyzer.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,9 +17,11 @@ public class Phase {
 
     @ManyToOne
     @JoinColumn(name = "report_id")
+    @JsonIgnore
     private Report report;
 
     private LocalTime start;
     private LocalTime stop;
     private String category;
+    private Double distance;
 }

@@ -21,7 +21,7 @@ public class Report {
     private String path;
 
     @OneToMany(mappedBy = "report")
-    private List<Phase> phasesInterval = new ArrayList<>();
+    private List<Phase> phases = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "metadata_id", referencedColumnName = "id")
