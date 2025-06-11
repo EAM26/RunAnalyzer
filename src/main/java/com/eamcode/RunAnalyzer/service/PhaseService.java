@@ -23,12 +23,15 @@ public class PhaseService {
     private final PhaseRepository phaseRepository;
     private final ReportRepository reportRepository;
 
-    public Phase createPhase(PhaseRequest request) {
+    public Phase createPhase(PhaseRequest request) throws IOException {
+        Report report = reportRepository.findById(request.getReportId())
+                .orElseThrow(() -> new NoSuchElementException("No report found."));
+        Analyzer analyzer = new Analyzer(report.getPath());
         Phase phase = new Phase();
-        return mapToPhase(phase, request);
+        return mapToPhase(phase, request, analyzer);
     }
 
-    public void createMultiPhase(int multiplier, Long reportId, String name1,
+    public List<Phase> createMultiPhase(int multiplier, Long reportId, String name1,
                                         String name2, String duration1, String duration2) throws IOException {
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new NoSuchElementException("No report found."));
@@ -46,7 +49,7 @@ public class PhaseService {
 //            Phase Times
             if (i == 0) {
                 if (!totalPhases.isEmpty()) {
-                    phase.setStartTime(totalPhases.getLast().getStartTime());
+                    phase.setStartTime(totalPhases.getLast().getStopTime());
                 } else {
                     phase.setStartTime(LocalTime.MIDNIGHT);
                 }
@@ -70,29 +73,35 @@ public class PhaseService {
             phase.setSpeed(analyzer.calculateSpeedInKmh(phase.getDistance(), duration));
 
             phasesCreated.add(phase);
-
-//            calctester
-            totalDistance += phase.getDistance();
-            totalDuration = totalDuration.plus(duration);
-
         }
-        System.out.println("******************");
-        System.out.println("total distance: " + totalDistance);
-        System.out.println("total duration: " + totalDuration);
-        System.out.println("******************");
+
         totalPhases.addAll(phasesCreated);
         report.setPhases(totalPhases);
 
         reportRepository.save(report);
+        return report.getPhases();
     }
 
-    private Phase mapToPhase(Phase phase, PhaseRequest request) {
+    private Phase mapToPhase(Phase phase, PhaseRequest request, Analyzer analyzer) throws IOException {
         Report report = reportRepository.findById(request.getReportId())
                 .orElseThrow(() -> new NoSuchElementException("Report not found."));
         phase.setReport(report);
-        phase.setStartTime(request.getStartTime());
-        phase.setStopTime(request.getStopTime());
+        setTimes(phase, request);
         phase.setCategory(request.getCategory());
+
+        phase.setDistance(analyzer.calcPhaseDistance(analyzer, phase));
+        Duration duration = Duration.between(LocalTime.MIN, LocalTime.parse(request.getDuration()));
+        phase.setSpeed(analyzer.calculateSpeedInKmh(phase.getDistance(), duration));
         return phaseRepository.save(phase);
+    }
+
+    private void setTimes(Phase phase, PhaseRequest request) {
+        if(!phase.getReport().getPhases().isEmpty()) {
+            phase.setStartTime(phase.getReport().getPhases().getLast().getStopTime());
+        } else {
+            phase.setStartTime(LocalTime.parse("00:00:00"));
+        }
+        Duration duration = Duration.between(LocalTime.MIN, LocalTime.parse(request.getDuration()));
+        phase.setStopTime(phase.getStartTime().plus(duration));
     }
 }

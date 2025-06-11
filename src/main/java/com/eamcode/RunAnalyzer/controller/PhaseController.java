@@ -17,7 +17,7 @@ public class PhaseController {
     private final PhaseService phaseService;
 
     @PostMapping
-    public ResponseEntity<Phase> createPhase(@RequestBody PhaseRequest request) {
+    public ResponseEntity<Phase> createPhase(@RequestBody PhaseRequest request) throws IOException {
         return ResponseEntity.ok(phaseService.createPhase(request));
     }
 
