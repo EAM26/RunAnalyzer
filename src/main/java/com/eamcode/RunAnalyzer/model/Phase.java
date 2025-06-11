@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.Duration;
 import java.time.LocalTime;
 
 @Data
@@ -25,6 +26,7 @@ public class Phase {
     private String category;
     private Double distance;
     private Double speed;
+    private Duration duration;
 
     @JsonProperty("distance")
     public String getFormattedDistance() {

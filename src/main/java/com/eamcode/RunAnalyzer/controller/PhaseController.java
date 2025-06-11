@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,11 +23,11 @@ public class PhaseController {
     }
 
     @PostMapping("/multi")
-    public ResponseEntity<Void> addMultiPhase(@RequestParam int multiplier, @RequestParam Long reportId,
-                                                @RequestParam String name1, @RequestParam String name2,
-                                                @RequestParam String duration1, @RequestParam String duration2) throws IOException {
-        phaseService.createMultiPhase(multiplier, reportId, name1, name2, duration1, duration2);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<List<Phase>> addMultiPhase(@RequestParam int multiplier, @RequestParam Long reportId,
+                                                     @RequestParam String name1, @RequestParam String name2,
+                                                     @RequestParam String duration1, @RequestParam String duration2) throws IOException {
+
+        return ResponseEntity.ok(phaseService.createMultiPhase(multiplier, reportId, name1, name2, duration1, duration2));
     }
 
 

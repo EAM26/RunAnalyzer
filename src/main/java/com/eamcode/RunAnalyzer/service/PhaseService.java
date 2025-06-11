@@ -6,6 +6,7 @@ import com.eamcode.RunAnalyzer.model.Phase;
 import com.eamcode.RunAnalyzer.model.Report;
 import com.eamcode.RunAnalyzer.repository.PhaseRepository;
 import com.eamcode.RunAnalyzer.repository.ReportRepository;
+import com.eamcode.RunAnalyzer.util.DurationConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -63,14 +64,15 @@ public class PhaseService {
 
 //            Phase Duration
             String durationAsSTring = (i % 2 == 0) ? duration1 : duration2;
-            Duration duration = Duration.between(LocalTime.MIN, LocalTime.parse(durationAsSTring));
+            Duration duration = DurationConverter.convert(durationAsSTring);
+            phase.setDuration(duration);
             phase.setStopTime(phase.getStartTime().plus(duration));
 
 //            Phase Distance
             phase.setDistance(analyzer.calcPhaseDistance(analyzer, phase));
 
 //            Phase Speed
-            phase.setSpeed(analyzer.calculateSpeedInKmh(phase.getDistance(), duration));
+            phase.setSpeed(analyzer.calculateSpeedInKmh(phase.getDistance(), phase.getDuration()));
 
             phasesCreated.add(phase);
         }
@@ -86,22 +88,23 @@ public class PhaseService {
         Report report = reportRepository.findById(request.getReportId())
                 .orElseThrow(() -> new NoSuchElementException("Report not found."));
         phase.setReport(report);
-        setTimes(phase, request);
-        phase.setCategory(request.getCategory());
 
+//        Convert to Duration
+        phase.setDuration(DurationConverter.convert(request.getDuration()));
+        setTimes(phase);
+
+        phase.setCategory(request.getCategory());
         phase.setDistance(analyzer.calcPhaseDistance(analyzer, phase));
-        Duration duration = Duration.between(LocalTime.MIN, LocalTime.parse(request.getDuration()));
-        phase.setSpeed(analyzer.calculateSpeedInKmh(phase.getDistance(), duration));
+        phase.setSpeed(analyzer.calculateSpeedInKmh(phase.getDistance(), phase.getDuration()));
         return phaseRepository.save(phase);
     }
 
-    private void setTimes(Phase phase, PhaseRequest request) {
+    private void setTimes(Phase phase) {
         if(!phase.getReport().getPhases().isEmpty()) {
             phase.setStartTime(phase.getReport().getPhases().getLast().getStopTime());
         } else {
             phase.setStartTime(LocalTime.parse("00:00:00"));
         }
-        Duration duration = Duration.between(LocalTime.MIN, LocalTime.parse(request.getDuration()));
-        phase.setStopTime(phase.getStartTime().plus(duration));
+        phase.setStopTime(phase.getStartTime().plus(phase.getDuration()));
     }
 }

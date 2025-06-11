@@ -13,5 +13,8 @@ public class PhaseRequest {
     private String category;
     private Long reportId;
 
+    public Duration getParsedDuration() {
+        return Duration.between(LocalTime.MIN, LocalTime.parse(duration));
+    }
 
 }
