@@ -23,7 +23,10 @@ public class Phase {
 
     private LocalTime startTime;
     private LocalTime stopTime;
-    private String category;
+
+    @Enumerated(EnumType.STRING)
+    private PhaseCategory category;
+
     private Double distance;
     private Double speed;
     private Duration duration;

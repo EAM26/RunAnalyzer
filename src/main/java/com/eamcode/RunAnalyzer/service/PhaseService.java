@@ -1,6 +1,7 @@
 package com.eamcode.RunAnalyzer.service;
 
 import com.eamcode.RunAnalyzer.dto.PhaseRequest;
+import com.eamcode.RunAnalyzer.model.PhaseCategory;
 import com.eamcode.RunAnalyzer.util.Analyzer;
 import com.eamcode.RunAnalyzer.model.Phase;
 import com.eamcode.RunAnalyzer.model.Report;
@@ -32,8 +33,8 @@ public class PhaseService {
         return mapToPhase(phase, request, analyzer);
     }
 
-    public List<Phase> createMultiPhase(int multiplier, Long reportId, String name1,
-                                        String name2, String duration1, String duration2) throws IOException {
+    public List<Phase> createMultiPhase(int multiplier, Long reportId, PhaseCategory category1,
+                                        PhaseCategory category2, String duration1, String duration2) throws IOException {
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new NoSuchElementException("No report found."));
 
@@ -57,7 +58,7 @@ public class PhaseService {
             }
 
 //            Phase Category
-            String category = (i % 2 == 0) ? name1 : name2;
+            PhaseCategory category = (i % 2 == 0) ? category1 : category2;
             phase.setCategory(category);
 
 //            Phase Duration
