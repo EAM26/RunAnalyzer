@@ -37,8 +37,6 @@ public class PhaseService {
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new NoSuchElementException("No report found."));
 
-        double totalDistance = 0d;
-        Duration totalDuration = Duration.ZERO;
         List<Phase> totalPhases = report.getPhases();
         List<Phase> phasesCreated = new ArrayList<>();
         Analyzer analyzer = new Analyzer(report.getPath());
