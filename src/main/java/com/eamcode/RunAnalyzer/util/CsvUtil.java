@@ -19,7 +19,7 @@ import java.util.List;
 public class CsvUtil {
 
 
-    public MetaData getMetaDataFromCSV(String path) throws IOException {
+    public static MetaData getMetaDataFromCSV(String path) throws IOException {
         MetaData metaData = new MetaData();
         List<String> allLines = Files.readAllLines(Path.of(path));
 
@@ -43,7 +43,7 @@ public class CsvUtil {
         return metaData;
     }
 
-    public List<DataRow> getDataRowsFromCsv(String path) throws IOException {
+    public static List<DataRow> getDataRowsFromCsv(String path) throws IOException {
         List<String> allLines = Files.readAllLines(Path.of(path));
         List<String> dataRowLines = allLines.subList(2, allLines.size());
 

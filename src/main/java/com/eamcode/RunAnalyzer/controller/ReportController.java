@@ -1,8 +1,6 @@
 package com.eamcode.RunAnalyzer.controller;
 
 import com.eamcode.RunAnalyzer.dto.ReportResponse;
-import com.eamcode.RunAnalyzer.model.Analyzer;
-import com.eamcode.RunAnalyzer.service.AnalyzerService;
 import com.eamcode.RunAnalyzer.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +15,6 @@ import java.util.List;
 public class ReportController {
 
     private final ReportService reportService;
-    private final AnalyzerService analyzerService;
 
     @GetMapping
     public ResponseEntity<List<ReportResponse>> getReports() {
@@ -37,10 +34,4 @@ public class ReportController {
     public ResponseEntity<ReportResponse> getReport(@PathVariable Long id) throws IOException {
         return ResponseEntity.ok(reportService.getSingleReport(id));
     }
-
-//    @GetMapping("/analyzer/{reportId}")
-//    public ResponseEntity<Analyzer> analyze(@PathVariable Long reportId) throws IOException {
-//        Analyzer analyzer = analyzerService.getAnalysis(reportId);
-//        return ResponseEntity.ok(analyzer);
-//    }
 }

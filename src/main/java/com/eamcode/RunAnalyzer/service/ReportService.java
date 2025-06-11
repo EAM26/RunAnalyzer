@@ -17,18 +17,14 @@ public class ReportService {
 
     private final ReportRepository reportRepository;
     private final CsvUtil csvUtil;
-    private final AnalyzerService analyzerService;
 
     public Report createReport(String path) throws IOException {
         Report report = new Report();
 
 //        MetaData
-        report.setMetaData(csvUtil.getMetaDataFromCSV(path));
+        report.setMetaData(CsvUtil.getMetaDataFromCSV(path));
         report.setName(report.getMetaData().getDate());
         report.setPath(path);
-
-////        PhaseAnalysis
-//        analyzerService.getAnalysis(report);
 
         return reportRepository.save(report);
     }
@@ -57,8 +53,6 @@ public class ReportService {
         Optional<Report> optional = reportRepository.findById(id);
         if(optional.isPresent()) {
             Report report = optional.get();
-            analyzerService.getAnalysis(report);
-            reportRepository.save(report);
             return mapToDto(report);
         }
         return null;
