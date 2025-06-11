@@ -34,11 +34,4 @@ public class Analyzer {
                 .orElseThrow(() -> new IllegalStateException("No value found for time: "));
     }
 
-    public double calculateSpeedInKmh(double distanceMeters, Duration duration) {
-        long seconds = duration.getSeconds();
-        if (seconds == 0) return 0;
-        return (distanceMeters * 3.6) / seconds;
-    }
-
-
 }

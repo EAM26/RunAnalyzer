@@ -14,4 +14,5 @@ public class ReportResponse {
     private String path;
     private List<Phase> phases;
     private MetaData metaData;
+    private List<PhaseGroupSummary> summaries;
 }

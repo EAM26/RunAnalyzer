@@ -8,6 +8,7 @@ import com.eamcode.RunAnalyzer.model.Report;
 import com.eamcode.RunAnalyzer.repository.PhaseRepository;
 import com.eamcode.RunAnalyzer.repository.ReportRepository;
 import com.eamcode.RunAnalyzer.util.DurationConverter;
+import com.eamcode.RunAnalyzer.util.SpeedConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +72,7 @@ public class PhaseService {
             phase.setDistance(analyzer.calcPhaseDistance(analyzer, phase));
 
 //            Phase Speed
-            phase.setSpeed(analyzer.calculateSpeedInKmh(phase.getDistance(), phase.getDuration()));
+            phase.setSpeed(SpeedConverter.speedInKmh(phase.getDistance(), phase.getDuration()));
 
             phasesCreated.add(phase);
         }
@@ -94,7 +95,7 @@ public class PhaseService {
 
         phase.setCategory(request.getCategory());
         phase.setDistance(analyzer.calcPhaseDistance(analyzer, phase));
-        phase.setSpeed(analyzer.calculateSpeedInKmh(phase.getDistance(), phase.getDuration()));
+        phase.setSpeed(SpeedConverter.speedInKmh(phase.getDistance(), phase.getDuration()));
         return phaseRepository.save(phase);
     }
 
