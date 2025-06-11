@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/phases")
@@ -22,7 +24,7 @@ public class PhaseController {
     @PostMapping("/multi")
     public ResponseEntity<Void> addMultiPhase(@RequestParam int multiplier, @RequestParam Long reportId,
                                                 @RequestParam String name1, @RequestParam String name2,
-                                                @RequestParam String duration1, @RequestParam String duration2) {
+                                                @RequestParam String duration1, @RequestParam String duration2) throws IOException {
         phaseService.createMultiPhase(multiplier, reportId, name1, name2, duration1, duration2);
         return ResponseEntity.ok().build();
     }
