@@ -87,7 +87,7 @@ public class PhaseService {
         return report.getPhases();
     }
 
-    private Phase mapToPhase(Phase phase, PhaseRequest request, Analyzer analyzer) throws IOException {
+    private Phase mapToPhase(Phase phase, PhaseRequest request, Analyzer analyzer) {
         Report report = reportRepository.findById(request.getReportId())
                 .orElseThrow(() -> new NoSuchElementException("Report not found."));
         phase.setReport(report);
