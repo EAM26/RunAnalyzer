@@ -59,15 +59,24 @@ public class PhaseService {
                 phase.setStartTime(phasesCreated.get(i - 1).getStopTime());
             }
 
+            //            Phase Duration
+            String durationAsSTring = (i % 2 == 0) ? duration1 : duration2;
+            Duration duration = DurationConverter.convert(durationAsSTring);
+            phase.setDuration(duration);
+
+            LocalTime stopTime = phase.getStartTime().plus(phase.getDuration());
+            if(stopTime.isAfter(phase.getReport().getMetaData().getDuration())) {
+                throw new IllegalArgumentException("Time is out of bounds.");
+            }
+            phase.setStopTime(stopTime);
+
 //            Phase Category
             PhaseCategory category = (i % 2 == 0) ? category1 : category2;
             phase.setCategory(category);
 
-//            Phase Duration
-            String durationAsSTring = (i % 2 == 0) ? duration1 : duration2;
-            Duration duration = DurationConverter.convert(durationAsSTring);
-            phase.setDuration(duration);
-            phase.setStopTime(phase.getStartTime().plus(duration));
+
+
+
 
 //            Phase Distance
             phase.setDistance(analyzer.calcPhaseDistance(analyzer, phase));
@@ -109,7 +118,13 @@ public class PhaseService {
         } else {
             phase.setStartTime(LocalTime.parse("00:00:00"));
         }
-        phase.setStopTime(phase.getStartTime().plus(phase.getDuration()));
+        LocalTime stopTime = phase.getStartTime().plus(phase.getDuration());
+        if(stopTime.isAfter(phase.getReport().getMetaData().getDuration())) {
+            throw new IllegalArgumentException("Time is out of bounds");
+        }
+        phase.setStopTime(stopTime);
+
+
     }
 
 //    private int calcAvgHeartRate2(LocalTime start, LocalTime stop, Analyzer analyzer) {
