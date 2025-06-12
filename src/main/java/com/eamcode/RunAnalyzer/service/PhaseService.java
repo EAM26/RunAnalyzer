@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -74,6 +75,8 @@ public class PhaseService {
 //            Phase Speed
             phase.setSpeed(SpeedConverter.speedInKmh(phase.getDistance(), phase.getDuration()));
 
+//            Phase HearRate
+            phase.setHeartRateAvg(calcAvgHeartRate(phase.getStartTime(), phase.getStopTime(), analyzer));
             phasesCreated.add(phase);
         }
 
@@ -96,15 +99,50 @@ public class PhaseService {
         phase.setCategory(request.getCategory());
         phase.setDistance(analyzer.calcPhaseDistance(analyzer, phase));
         phase.setSpeed(SpeedConverter.speedInKmh(phase.getDistance(), phase.getDuration()));
+        phase.setHeartRateAvg(calcAvgHeartRate(phase.getStartTime(), phase.getStopTime(), analyzer));
         return phaseRepository.save(phase);
     }
 
     private void setTimes(Phase phase) {
-        if(!phase.getReport().getPhases().isEmpty()) {
+        if (!phase.getReport().getPhases().isEmpty()) {
             phase.setStartTime(phase.getReport().getPhases().getLast().getStopTime());
         } else {
             phase.setStartTime(LocalTime.parse("00:00:00"));
         }
         phase.setStopTime(phase.getStartTime().plus(phase.getDuration()));
     }
+
+//    private int calcAvgHeartRate2(LocalTime start, LocalTime stop, Analyzer analyzer) {
+//        List<Integer> heartRates = new ArrayList<>();
+//        Duration step = Duration.ofSeconds(1);
+//        for(LocalTime time = start; !time.isAfter(stop); time = time.plus(step)) {
+//            analyzer.getDataRows().stream()
+//                    .filter((dataRow)-> dataRow.getTime().truncatedTo(ChronoUnit.SECONDS).equals(time))
+//                    .forEach(dataRow -> heartRates.add(Integer.parseInt(dataRow.getHeartRate())));
+//        }
+//
+//        if(!heartRates.isEmpty()) {
+//            return (int) heartRates.stream()
+//                    .mapToInt(Integer::intValue)
+//                    .average()
+//                    .orElse(0);
+//        } else {
+//            return 0;
+//        }
+//    }
+
+    private double calcAvgHeartRate(LocalTime start, LocalTime stop, Analyzer analyzer) {
+        return analyzer.getDataRows().stream()
+                .filter(dataRow -> {
+                    LocalTime t = dataRow.getTime().truncatedTo(ChronoUnit.SECONDS);
+                    return (!t.isBefore(start)) && (!t.isAfter(stop));
+                })
+                .mapToDouble(dataRow -> Double.parseDouble(dataRow.getHeartRate()))
+                .average()
+                .orElse(0);
+    }
+
 }
+
+
+

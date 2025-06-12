@@ -29,6 +29,7 @@ public class Phase {
     private Double distance;
     private Double speed;
     private Duration duration;
+    private double heartRateAvg;
 
 //    @JsonProperty("distance")
 //    public String getFormattedDistance() {

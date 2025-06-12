@@ -13,6 +13,7 @@ public class PhaseGroupSummary {
     private double totalDistance;
     private Duration totalDuration = Duration.ZERO;
     private double averageSpeed;
+    private double averageHeartRate;
 
 //    @JsonProperty("averageSpeed")
 //    public String getFormattedSpeed() {

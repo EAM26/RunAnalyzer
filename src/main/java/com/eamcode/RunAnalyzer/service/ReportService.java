@@ -62,15 +62,23 @@ public class ReportService {
         List<PhaseGroupSummary> summaries = new ArrayList<>();
         for(PhaseCategory category: PhaseCategory.values()) {
             PhaseGroupSummary summary = new PhaseGroupSummary();
+            List<Double> allHeartRates = new ArrayList<>();
             summary.setCategory(category);
             for(Phase phase: report.getPhases()) {
                 if(category.equals(phase.getCategory())) {
                     summary.setTotalDistance(summary.getTotalDistance() + phase.getDistance());
                     summary.setTotalDuration(summary.getTotalDuration().plus(phase.getDuration()));
-                    summary.setAverageSpeed(SpeedConverter.speedInKmh(summary.getTotalDistance(),
-                            summary.getTotalDuration()));
+                    allHeartRates.add(phase.getHeartRateAvg());
                 }
             }
+            summary.setAverageSpeed(SpeedConverter.speedInKmh(summary.getTotalDistance(),
+                    summary.getTotalDuration()));
+
+            summary.setAverageHeartRate(allHeartRates.stream()
+                    .mapToDouble(Double::doubleValue)
+                    .average()
+                    .orElse(0));
+
             summaries.add(summary);
         }
         return summaries;
