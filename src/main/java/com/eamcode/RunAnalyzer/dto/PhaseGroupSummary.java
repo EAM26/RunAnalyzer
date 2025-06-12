@@ -14,13 +14,13 @@ public class PhaseGroupSummary {
     private Duration totalDuration = Duration.ZERO;
     private double averageSpeed;
 
-    @JsonProperty("averageSpeed")
-    public String getFormattedSpeed() {
-        return String.format("%.2f", averageSpeed);
-    }
-
-    @JsonProperty("totalDistance")
-    public String getFormattedTotalDistance() {
-        return String.format("%.2f", totalDistance);
-    }
+//    @JsonProperty("averageSpeed")
+//    public String getFormattedSpeed() {
+//        return String.format("%.2f", averageSpeed);
+//    }
+//
+//    @JsonProperty("totalDistance")
+//    public String getFormattedTotalDistance() {
+//        return String.format("%.2f", totalDistance);
+//    }
 }
