@@ -31,14 +31,14 @@ public class Phase {
     private Double speed;
     private Duration duration;
 
-    @JsonProperty("distance")
-    public String getFormattedDistance() {
-        return String.format("%.2f", distance);
-    }
-
-    @JsonProperty("speed")
-    public String getFormattedSpeed() {
-        return String.format("%.2f", speed);
-    }
+//    @JsonProperty("distance")
+//    public String getFormattedDistance() {
+//        return String.format("%.2f", distance);
+//    }
+//
+//    @JsonProperty("speed")
+//    public String getFormattedSpeed() {
+//        return String.format("%.2f", speed);
+//    }
 
 }

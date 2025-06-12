@@ -1,10 +1,10 @@
 package com.eamcode.RunAnalyzer.dto;
 
 import com.eamcode.RunAnalyzer.model.PhaseCategory;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.Duration;
-import java.time.LocalTime;
 
 @Data
 public class PhaseGroupSummary {
@@ -13,4 +13,14 @@ public class PhaseGroupSummary {
     private double totalDistance;
     private Duration totalDuration = Duration.ZERO;
     private double averageSpeed;
+
+    @JsonProperty("averageSpeed")
+    public String getFormattedSpeed() {
+        return String.format("%.2f", averageSpeed);
+    }
+
+    @JsonProperty("totalDistance")
+    public String getFormattedTotalDistance() {
+        return String.format("%.2f", totalDistance);
+    }
 }
