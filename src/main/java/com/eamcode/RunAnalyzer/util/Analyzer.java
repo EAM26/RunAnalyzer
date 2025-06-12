@@ -5,7 +5,6 @@ import com.eamcode.RunAnalyzer.model.Phase;
 import lombok.Data;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class Analyzer {
 
     private List<DataRow> dataRows;
 
-    public double calcPhaseDistance(Analyzer analyzer, Phase phase) throws IOException {
+    public double calcPhaseDistance(Analyzer analyzer, Phase phase) {
         double startDistance = getDistanceOfTime(analyzer, phase.getStartTime());
         double endDistance = getDistanceOfTime(analyzer, phase.getStopTime());
         return endDistance - startDistance;
@@ -33,12 +32,5 @@ public class Analyzer {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No value found for time: "));
     }
-
-    public double calculateSpeedInKmh(double distanceMeters, Duration duration) {
-        long seconds = duration.getSeconds();
-        if (seconds == 0) return 0;
-        return (distanceMeters * 3.6) / seconds;
-    }
-
 
 }

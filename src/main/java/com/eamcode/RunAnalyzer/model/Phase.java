@@ -1,7 +1,6 @@
 package com.eamcode.RunAnalyzer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -23,19 +22,23 @@ public class Phase {
 
     private LocalTime startTime;
     private LocalTime stopTime;
-    private String category;
+
+    @Enumerated(EnumType.STRING)
+    private PhaseCategory category;
+
     private Double distance;
     private Double speed;
     private Duration duration;
+    private double heartRateAvg;
 
-    @JsonProperty("distance")
-    public String getFormattedDistance() {
-        return String.format("%.2f", distance);
-    }
-
-    @JsonProperty("speed")
-    public String getFormattedSpeed() {
-        return String.format("%.2f", speed);
-    }
+//    @JsonProperty("distance")
+//    public String getFormattedDistance() {
+//        return String.format("%.2f", distance);
+//    }
+//
+//    @JsonProperty("speed")
+//    public String getFormattedSpeed() {
+//        return String.format("%.2f", speed);
+//    }
 
 }

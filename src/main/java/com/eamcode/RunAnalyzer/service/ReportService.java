@@ -1,13 +1,19 @@
 package com.eamcode.RunAnalyzer.service;
 
+import com.eamcode.RunAnalyzer.dto.PhaseGroupSummary;
 import com.eamcode.RunAnalyzer.dto.ReportResponse;
+import com.eamcode.RunAnalyzer.model.Phase;
+import com.eamcode.RunAnalyzer.model.PhaseCategory;
 import com.eamcode.RunAnalyzer.model.Report;
 import com.eamcode.RunAnalyzer.repository.ReportRepository;
 import com.eamcode.RunAnalyzer.util.CsvUtil;
+import com.eamcode.RunAnalyzer.util.SpeedConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,8 +22,7 @@ import java.util.Optional;
 public class ReportService {
 
     private final ReportRepository reportRepository;
-    private final CsvUtil csvUtil;
-
+    
     public Report createReport(String path) throws IOException {
         Report report = new Report();
 
@@ -46,15 +51,45 @@ public class ReportService {
         response.setPath(report.getPath());
         response.setMetaData(report.getMetaData());
 
+        if(!report.getPhases().isEmpty()) {
+            response.setSummaries(calcSummaries(report));
+        }
+
         return response;
     }
 
-    public ReportResponse getSingleReport(Long id) throws IOException {
-        Optional<Report> optional = reportRepository.findById(id);
-        if(optional.isPresent()) {
-            Report report = optional.get();
-            return mapToDto(report);
+    private List<PhaseGroupSummary> calcSummaries(Report report) {
+        List<PhaseGroupSummary> summaries = new ArrayList<>();
+        for(PhaseCategory category: PhaseCategory.values()) {
+            PhaseGroupSummary summary = new PhaseGroupSummary();
+            List<Double> allHeartRates = new ArrayList<>();
+            summary.setCategory(category);
+            for(Phase phase: report.getPhases()) {
+                if(category.equals(phase.getCategory())) {
+                    summary.setTotalDistance(summary.getTotalDistance() + phase.getDistance());
+                    summary.setTotalDuration(summary.getTotalDuration().plus(phase.getDuration()));
+                    allHeartRates.add(phase.getHeartRateAvg());
+                }
+            }
+            summary.setAverageSpeed(SpeedConverter.speedInKmh(summary.getTotalDistance(),
+                    summary.getTotalDuration()));
+
+            summary.setAverageHeartRate(allHeartRates.stream()
+                    .mapToDouble(Double::doubleValue)
+                    .average()
+                    .orElse(0));
+
+            summaries.add(summary);
         }
-        return null;
+        return summaries;
+    }
+
+    public ReportResponse getSingleReport(Long id) throws FileNotFoundException {
+        Optional<Report> optional = reportRepository.findById(id);
+        if(optional.isEmpty()) {
+            throw new FileNotFoundException("Report not found.");
+        }
+        Report report = optional.get();
+        return mapToDto(report);
     }
 }

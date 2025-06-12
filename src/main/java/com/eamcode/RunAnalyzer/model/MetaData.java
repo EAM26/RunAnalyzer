@@ -20,6 +20,7 @@ public class MetaData {
     LocalTime duration;
     String totalDistance;
     String heartRateAvg;
+    String speedAvg;
 
 
 
