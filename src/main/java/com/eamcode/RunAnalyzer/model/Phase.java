@@ -31,14 +31,4 @@ public class Phase {
     private Duration duration;
     private double heartRateAvg;
 
-//    @JsonProperty("distance")
-//    public String getFormattedDistance() {
-//        return String.format("%.2f", distance);
-//    }
-//
-//    @JsonProperty("speed")
-//    public String getFormattedSpeed() {
-//        return String.format("%.2f", speed);
-//    }
-
 }

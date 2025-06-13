@@ -12,6 +12,7 @@ import com.eamcode.RunAnalyzer.util.SpeedConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -29,7 +30,7 @@ public class PhaseService {
 
     public Phase createPhase(PhaseRequest request) throws IOException {
         Report report = reportRepository.findById(request.getReportId())
-                .orElseThrow(() -> new NoSuchElementException("No report found."));
+                .orElseThrow(() -> new FileNotFoundException("No report found."));
         Analyzer analyzer = new Analyzer(report.getPath());
         Phase phase = new Phase();
         return mapToPhase(phase, request, analyzer);
@@ -38,7 +39,7 @@ public class PhaseService {
     public List<Phase> createMultiPhase(int multiplier, Long reportId, PhaseCategory category1,
                                         PhaseCategory category2, String duration1, String duration2) throws IOException {
         Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new NoSuchElementException("No report found."));
+                .orElseThrow(() -> new FileNotFoundException("No report found."));
 
         List<Phase> totalPhases = report.getPhases();
         List<Phase> phasesCreated = new ArrayList<>();

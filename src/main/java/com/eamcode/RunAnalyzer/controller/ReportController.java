@@ -1,11 +1,13 @@
 package com.eamcode.RunAnalyzer.controller;
 
 import com.eamcode.RunAnalyzer.dto.ReportResponse;
+import com.eamcode.RunAnalyzer.model.Report;
 import com.eamcode.RunAnalyzer.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -22,16 +24,12 @@ public class ReportController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createReport(@RequestParam String path)  {
-        try {
-            return ResponseEntity.ok(reportService.createReport(path));
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body("File not found.");
-        }
+    public ResponseEntity<Report> createReport(@RequestParam String path) throws IOException {
+        return ResponseEntity.ok(reportService.createReport(path));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReportResponse> getReport(@PathVariable Long id) throws IOException {
+    public ResponseEntity<ReportResponse> getReport(@PathVariable Long id) throws FileNotFoundException {
         return ResponseEntity.ok(reportService.getSingleReport(id));
     }
 }
