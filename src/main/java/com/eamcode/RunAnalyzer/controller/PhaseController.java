@@ -1,7 +1,6 @@
 package com.eamcode.RunAnalyzer.controller;
 
 import com.eamcode.RunAnalyzer.dto.PhaseRequest;
-import com.eamcode.RunAnalyzer.model.Phase;
 import com.eamcode.RunAnalyzer.model.PhaseCategory;
 import com.eamcode.RunAnalyzer.service.PhaseService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

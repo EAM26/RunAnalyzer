@@ -65,8 +65,8 @@ public class PhaseService {
             phase.setDuration(duration);
 
             LocalTime stopTime = phase.getStartTime().plus(phase.getDuration());
-            if(stopTime.isAfter(phase.getReport().getMetaData().getDuration())) {
-                throw new IllegalArgumentException("Time is out of bounds.");
+            if (stopTime.isAfter(analyzer.getEndTime())) {
+                throw new IllegalArgumentException("Time is out of bounds. > " + analyzer.getEndTime());
             }
             phase.setStopTime(stopTime);
 
@@ -74,12 +74,8 @@ public class PhaseService {
             PhaseCategory category = (i % 2 == 0) ? category1 : category2;
             phase.setCategory(category);
 
-
-
-
-
 //            Phase Distance
-            phase.setDistance(analyzer.calcPhaseDistance(analyzer, phase));
+            phase.setDistance(analyzer.calcPhaseDistance(phase));
 
 //            Phase Speed
             phase.setSpeed(SpeedConverter.speedInKmh(phase.getDistance(), phase.getDuration()));
@@ -103,24 +99,24 @@ public class PhaseService {
 
 //        Convert to Duration
         phase.setDuration(DurationConverter.convert(request.getDuration()));
-        setTimes(phase);
+        setTimes(analyzer, phase);
 
         phase.setCategory(request.getCategory());
-        phase.setDistance(analyzer.calcPhaseDistance(analyzer, phase));
+        phase.setDistance(analyzer.calcPhaseDistance(phase));
         phase.setSpeed(SpeedConverter.speedInKmh(phase.getDistance(), phase.getDuration()));
         phase.setHeartRateAvg(calcAvgHeartRate(phase.getStartTime(), phase.getStopTime(), analyzer));
         return phaseRepository.save(phase);
     }
 
-    private void setTimes(Phase phase) {
+    private void setTimes(Analyzer analyzer, Phase phase) {
         if (!phase.getReport().getPhases().isEmpty()) {
             phase.setStartTime(phase.getReport().getPhases().getLast().getStopTime());
         } else {
             phase.setStartTime(LocalTime.parse("00:00:00"));
         }
         LocalTime stopTime = phase.getStartTime().plus(phase.getDuration());
-        if(stopTime.isAfter(phase.getReport().getMetaData().getDuration())) {
-            throw new IllegalArgumentException("Time is out of bounds");
+        if (stopTime.isAfter(analyzer.getEndTime())) {
+            throw new IllegalArgumentException("Time is out of bounds. > " + analyzer.getEndTime());
         }
         phase.setStopTime(stopTime);
 
