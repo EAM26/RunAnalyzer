@@ -1,6 +1,7 @@
 package com.eamcode.RunAnalyzer.service;
 
 import com.eamcode.RunAnalyzer.dto.PhaseRequest;
+import com.eamcode.RunAnalyzer.dto.PhaseResponse;
 import com.eamcode.RunAnalyzer.model.PhaseCategory;
 import com.eamcode.RunAnalyzer.util.Analyzer;
 import com.eamcode.RunAnalyzer.model.Phase;
@@ -10,6 +11,7 @@ import com.eamcode.RunAnalyzer.repository.ReportRepository;
 import com.eamcode.RunAnalyzer.util.DurationConverter;
 import com.eamcode.RunAnalyzer.util.SpeedConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.Phased;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -28,16 +30,18 @@ public class PhaseService {
     private final PhaseRepository phaseRepository;
     private final ReportRepository reportRepository;
 
-    public Phase createPhase(PhaseRequest request) throws IOException {
+    public PhaseResponse createPhase(PhaseRequest request) throws IOException {
         Report report = reportRepository.findById(request.getReportId())
                 .orElseThrow(() -> new FileNotFoundException("No report found."));
         Analyzer analyzer = new Analyzer(report.getPath());
-        Phase phase = new Phase();
-        return mapToPhase(phase, request, analyzer);
+        Phase phase = mapToPhase(new Phase(), request, analyzer);
+        Phase savedPhase = phaseRepository.save(phase);
+        return mapToResponse(savedPhase);
+
     }
 
-    public List<Phase> createMultiPhase(int multiplier, Long reportId, PhaseCategory category1,
-                                        PhaseCategory category2, String duration1, String duration2) throws IOException {
+    public List<PhaseResponse> createMultiPhase(int multiplier, Long reportId, PhaseCategory category1,
+                                                PhaseCategory category2, String duration1, String duration2) throws IOException {
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new FileNotFoundException("No report found."));
 
@@ -90,7 +94,10 @@ public class PhaseService {
         report.setPhases(totalPhases);
 
         reportRepository.save(report);
-        return report.getPhases();
+
+
+        return mapToListResponses(report.getPhases());
+
     }
 
     private Phase mapToPhase(Phase phase, PhaseRequest request, Analyzer analyzer) {
@@ -106,7 +113,28 @@ public class PhaseService {
         phase.setDistance(analyzer.calcPhaseDistance(phase));
         phase.setSpeed(SpeedConverter.speedInKmh(phase.getDistance(), phase.getDuration()));
         phase.setHeartRateAvg(calcAvgHeartRate(phase.getStartTime(), phase.getStopTime(), analyzer));
-        return phaseRepository.save(phase);
+        return phase;
+//        return phaseRepository.save(phase);
+    }
+
+    public List<PhaseResponse> mapToListResponses(List<Phase> phases) {
+        return phases.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    private PhaseResponse mapToResponse(Phase phase) {
+        PhaseResponse response = new PhaseResponse();
+        response.setReportId(phase.getReport().getId());
+        response.setStartTime(phase.getStartTime());
+        response.setStopTime(phase.getStopTime());
+        response.setCategory(phase.getCategory());
+        response.setDistance(phase.getDistance());
+        response.setSpeed(phase.getSpeed());
+        response.setDuration(phase.getDuration());
+        response.setHeartRateAvg(phase.getHeartRateAvg());
+
+        return response;
     }
 
     private void setTimes(Analyzer analyzer, Phase phase) {

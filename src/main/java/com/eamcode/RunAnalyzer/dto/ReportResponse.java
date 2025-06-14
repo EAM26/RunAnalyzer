@@ -12,7 +12,7 @@ public class ReportResponse {
     private Long id;
     private String name;
     private String path;
-    private List<Phase> phases;
+    private List<PhaseResponse> phaseResponses;
     private MetaData metaData;
     private List<PhaseGroupSummary> summaries;
 }

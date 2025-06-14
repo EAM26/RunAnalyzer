@@ -1,6 +1,7 @@
 package com.eamcode.RunAnalyzer.service;
 
 import com.eamcode.RunAnalyzer.dto.PhaseGroupSummary;
+import com.eamcode.RunAnalyzer.dto.PhaseResponse;
 import com.eamcode.RunAnalyzer.dto.ReportResponse;
 import com.eamcode.RunAnalyzer.model.Phase;
 import com.eamcode.RunAnalyzer.model.PhaseCategory;
@@ -22,7 +23,8 @@ import java.util.Optional;
 public class ReportService {
 
     private final ReportRepository reportRepository;
-    
+    private final PhaseService phaseService;
+
     public Report createReport(String path) throws IOException {
         Report report = new Report();
 
@@ -47,14 +49,14 @@ public class ReportService {
         ReportResponse response = new ReportResponse();
         response.setId(report.getId());
         response.setName(report.getName());
-        response.setPhases(report.getPhases());
+        List<PhaseResponse> phaseResponses = phaseService.mapToListResponses(report.getPhases());
+        response.setPhaseResponses(phaseResponses);
         response.setPath(report.getPath());
         response.setMetaData(report.getMetaData());
 
         if(!report.getPhases().isEmpty()) {
             response.setSummaries(calcSummaries(report));
         }
-
         return response;
     }
 
