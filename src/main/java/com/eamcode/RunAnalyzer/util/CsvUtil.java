@@ -35,6 +35,7 @@ public class CsvUtil {
                 case "Name" -> metaData.setName(value);
                 case "Sport" -> metaData.setSport(value);
                 case "Date" -> metaData.setDate(value);
+                case "Start time" -> metaData.setStartTime(value);
                 case "Duration" -> metaData.setDuration(LocalTime.parse(value));
                 case "Total distance (km)" -> metaData.setTotalDistance(value);
                 case "Average speed (km/h)" -> metaData.setSpeedAvg(value);

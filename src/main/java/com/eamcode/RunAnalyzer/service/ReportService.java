@@ -31,8 +31,9 @@ public class ReportService {
 
 //        MetaData
         report.setMetaData(CsvUtil.getMetaDataFromCSV(path));
-        report.setName(report.getMetaData().getDate());
+        report.setName(report.getMetaData().getDate() + " " + report.getMetaData().getStartTime());
         report.setPath(path);
+        System.out.println("Start Time: " + report.getMetaData().getStartTime());
 
         return reportRepository.save(report);
     }

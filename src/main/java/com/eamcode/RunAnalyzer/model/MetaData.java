@@ -17,6 +17,7 @@ public class MetaData {
     String name;
     String sport;
     String date;
+    String startTime;
     LocalTime duration;
     String totalDistance;
     String heartRateAvg;
