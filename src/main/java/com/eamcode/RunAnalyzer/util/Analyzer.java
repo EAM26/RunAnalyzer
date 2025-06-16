@@ -18,9 +18,9 @@ public class Analyzer {
 
     private List<DataRow> dataRows;
 
-    public double calcPhaseDistance(Analyzer analyzer, Phase phase) {
-        double startDistance = getDistanceOfTime(analyzer, phase.getStartTime());
-        double endDistance = getDistanceOfTime(analyzer, phase.getStopTime());
+    public double calcPhaseDistance(Phase phase) {
+        double startDistance = getDistanceOfTime(this, phase.getStartTime());
+        double endDistance = getDistanceOfTime(this, phase.getStopTime());
         return endDistance - startDistance;
     }
 
@@ -31,6 +31,10 @@ public class Analyzer {
                 .map(DataRow::getDistance)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No value found for time: "));
+    }
+
+    public LocalTime getEndTime() {
+        return this.getDataRows().getLast().getTime();
     }
 
 }

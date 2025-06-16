@@ -1,24 +1,19 @@
-package com.eamcode.RunAnalyzer.model;
+package com.eamcode.RunAnalyzer.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import com.eamcode.RunAnalyzer.model.PhaseCategory;
+import com.eamcode.RunAnalyzer.model.Report;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 
 import java.time.Duration;
 import java.time.LocalTime;
 
 @Data
-@Entity
-public class Phase {
+public class PhaseResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "report_id")
-    @JsonIgnore
-    private Report report;
+    private Long reportId;
 
     private LocalTime startTime;
     private LocalTime stopTime;
@@ -30,5 +25,4 @@ public class Phase {
     private Double speed;
     private Duration duration;
     private double heartRateAvg;
-
 }

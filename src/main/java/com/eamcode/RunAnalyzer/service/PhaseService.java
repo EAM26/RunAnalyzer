@@ -1,6 +1,7 @@
 package com.eamcode.RunAnalyzer.service;
 
 import com.eamcode.RunAnalyzer.dto.PhaseRequest;
+import com.eamcode.RunAnalyzer.dto.PhaseResponse;
 import com.eamcode.RunAnalyzer.model.PhaseCategory;
 import com.eamcode.RunAnalyzer.util.Analyzer;
 import com.eamcode.RunAnalyzer.model.Phase;
@@ -10,8 +11,10 @@ import com.eamcode.RunAnalyzer.repository.ReportRepository;
 import com.eamcode.RunAnalyzer.util.DurationConverter;
 import com.eamcode.RunAnalyzer.util.SpeedConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.Phased;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -27,18 +30,20 @@ public class PhaseService {
     private final PhaseRepository phaseRepository;
     private final ReportRepository reportRepository;
 
-    public Phase createPhase(PhaseRequest request) throws IOException {
+    public PhaseResponse createPhase(PhaseRequest request) throws IOException {
         Report report = reportRepository.findById(request.getReportId())
-                .orElseThrow(() -> new NoSuchElementException("No report found."));
+                .orElseThrow(() -> new FileNotFoundException("No report found."));
         Analyzer analyzer = new Analyzer(report.getPath());
-        Phase phase = new Phase();
-        return mapToPhase(phase, request, analyzer);
+        Phase phase = mapToPhase(new Phase(), request, analyzer);
+        Phase savedPhase = phaseRepository.save(phase);
+        return mapToResponse(savedPhase);
+
     }
 
-    public List<Phase> createMultiPhase(int multiplier, Long reportId, PhaseCategory category1,
-                                        PhaseCategory category2, String duration1, String duration2) throws IOException {
+    public List<PhaseResponse> createMultiPhase(int multiplier, Long reportId, PhaseCategory category1,
+                                                PhaseCategory category2, String duration1, String duration2) throws IOException {
         Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new NoSuchElementException("No report found."));
+                .orElseThrow(() -> new FileNotFoundException("No report found."));
 
         List<Phase> totalPhases = report.getPhases();
         List<Phase> phasesCreated = new ArrayList<>();
@@ -59,18 +64,23 @@ public class PhaseService {
                 phase.setStartTime(phasesCreated.get(i - 1).getStopTime());
             }
 
+            //            Phase Duration
+            String durationAsSTring = (i % 2 == 0) ? duration1 : duration2;
+            Duration duration = DurationConverter.convert(durationAsSTring);
+            phase.setDuration(duration);
+
+            LocalTime stopTime = phase.getStartTime().plus(phase.getDuration());
+            if (stopTime.isAfter(analyzer.getEndTime())) {
+                throw new IllegalArgumentException("Time is out of bounds. > " + analyzer.getEndTime());
+            }
+            phase.setStopTime(stopTime);
+
 //            Phase Category
             PhaseCategory category = (i % 2 == 0) ? category1 : category2;
             phase.setCategory(category);
 
-//            Phase Duration
-            String durationAsSTring = (i % 2 == 0) ? duration1 : duration2;
-            Duration duration = DurationConverter.convert(durationAsSTring);
-            phase.setDuration(duration);
-            phase.setStopTime(phase.getStartTime().plus(duration));
-
 //            Phase Distance
-            phase.setDistance(analyzer.calcPhaseDistance(analyzer, phase));
+            phase.setDistance(analyzer.calcPhaseDistance(phase));
 
 //            Phase Speed
             phase.setSpeed(SpeedConverter.speedInKmh(phase.getDistance(), phase.getDuration()));
@@ -84,7 +94,10 @@ public class PhaseService {
         report.setPhases(totalPhases);
 
         reportRepository.save(report);
-        return report.getPhases();
+
+
+        return mapToListResponses(report.getPhases());
+
     }
 
     private Phase mapToPhase(Phase phase, PhaseRequest request, Analyzer analyzer) {
@@ -94,22 +107,49 @@ public class PhaseService {
 
 //        Convert to Duration
         phase.setDuration(DurationConverter.convert(request.getDuration()));
-        setTimes(phase);
+        setTimes(analyzer, phase);
 
         phase.setCategory(request.getCategory());
-        phase.setDistance(analyzer.calcPhaseDistance(analyzer, phase));
+        phase.setDistance(analyzer.calcPhaseDistance(phase));
         phase.setSpeed(SpeedConverter.speedInKmh(phase.getDistance(), phase.getDuration()));
         phase.setHeartRateAvg(calcAvgHeartRate(phase.getStartTime(), phase.getStopTime(), analyzer));
-        return phaseRepository.save(phase);
+        return phase;
+//        return phaseRepository.save(phase);
     }
 
-    private void setTimes(Phase phase) {
+    public List<PhaseResponse> mapToListResponses(List<Phase> phases) {
+        return phases.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    private PhaseResponse mapToResponse(Phase phase) {
+        PhaseResponse response = new PhaseResponse();
+        response.setReportId(phase.getReport().getId());
+        response.setStartTime(phase.getStartTime());
+        response.setStopTime(phase.getStopTime());
+        response.setCategory(phase.getCategory());
+        response.setDistance(phase.getDistance());
+        response.setSpeed(phase.getSpeed());
+        response.setDuration(phase.getDuration());
+        response.setHeartRateAvg(phase.getHeartRateAvg());
+
+        return response;
+    }
+
+    private void setTimes(Analyzer analyzer, Phase phase) {
         if (!phase.getReport().getPhases().isEmpty()) {
             phase.setStartTime(phase.getReport().getPhases().getLast().getStopTime());
         } else {
             phase.setStartTime(LocalTime.parse("00:00:00"));
         }
-        phase.setStopTime(phase.getStartTime().plus(phase.getDuration()));
+        LocalTime stopTime = phase.getStartTime().plus(phase.getDuration());
+        if (stopTime.isAfter(analyzer.getEndTime())) {
+            throw new IllegalArgumentException("Time is out of bounds. > " + analyzer.getEndTime());
+        }
+        phase.setStopTime(stopTime);
+
+
     }
 
 //    private int calcAvgHeartRate2(LocalTime start, LocalTime stop, Analyzer analyzer) {
