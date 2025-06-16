@@ -25,9 +25,16 @@ public class Analyzer {
     }
 
     private double getDistanceOfTime(Analyzer analyzer, LocalTime time) {
+//        Start distance always zero
+        if(time.equals(LocalTime.of(0,0,0))) {
+            return 0d;
+        }
+
+//        Correct time by minus 1 second, because the first measurement is at 00:00:00
+        LocalTime correctedTime = time.minusSeconds(1);
         return analyzer.getDataRows()
                 .stream()
-                .filter(item -> item.getTime().equals(time))
+                .filter(item -> item.getTime().equals(correctedTime))
                 .map(DataRow::getDistance)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No value found for time: "));
@@ -36,5 +43,7 @@ public class Analyzer {
     public LocalTime getEndTime() {
         return this.getDataRows().getLast().getTime();
     }
+
+    
 
 }

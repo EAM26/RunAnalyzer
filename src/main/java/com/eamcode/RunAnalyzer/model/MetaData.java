@@ -3,8 +3,6 @@ package com.eamcode.RunAnalyzer.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalTime;
-
 @Entity
 @Data
 @Table(name = "meta_data")
@@ -18,7 +16,7 @@ public class MetaData {
     String sport;
     String date;
     String startTime;
-    LocalTime duration;
+    String duration;
     String totalDistance;
     String heartRateAvg;
     String speedAvg;
