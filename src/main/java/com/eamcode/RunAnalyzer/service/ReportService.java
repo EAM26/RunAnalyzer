@@ -3,6 +3,7 @@ package com.eamcode.RunAnalyzer.service;
 import com.eamcode.RunAnalyzer.dto.PhaseGroupSummary;
 import com.eamcode.RunAnalyzer.dto.PhaseResponse;
 import com.eamcode.RunAnalyzer.dto.ReportResponse;
+import com.eamcode.RunAnalyzer.dto.ReportSummaryResponse;
 import com.eamcode.RunAnalyzer.model.Phase;
 import com.eamcode.RunAnalyzer.model.PhaseCategory;
 import com.eamcode.RunAnalyzer.model.Report;
@@ -39,13 +40,28 @@ public class ReportService {
     public List<ReportResponse> getAllReports() {
         return reportRepository.findAll()
                 .stream()
-                .map(this::mapToDto)
+                .map(this::mapToReportResponse)
                 .toList();
+    }
 
+    public ReportResponse getSingleReport(Long id) throws FileNotFoundException {
+        Optional<Report> optional = reportRepository.findById(id);
+        if(optional.isEmpty()) {
+            throw new FileNotFoundException("Report not found.");
+        }
+        Report report = optional.get();
+        return mapToReportResponse(report);
+    }
+
+    public List<ReportSummaryResponse> getSummaryReports() {
+        return reportRepository.findAll()
+                .stream()
+                .map(this::mapToSummaryResponse)
+                .toList();
     }
 
 
-    private ReportResponse mapToDto(Report report) {
+    private ReportResponse mapToReportResponse(Report report) {
         ReportResponse response = new ReportResponse();
         response.setId(report.getId());
         response.setName(report.getName());
@@ -58,6 +74,19 @@ public class ReportService {
             response.setSummaries(calcSummaries(report));
         }
         return response;
+    }
+
+    private ReportSummaryResponse mapToSummaryResponse(Report report) {
+        ReportSummaryResponse summaryResponse = new ReportSummaryResponse();
+        summaryResponse.setId(report.getId());
+        summaryResponse.setName(report.getName());
+        summaryResponse.setPath(report.getPath());
+        summaryResponse.setDistance(report.getMetaData().getTotalDistance());
+        summaryResponse.setDuration(report.getMetaData().getDuration());
+        summaryResponse.setId(report.getId());
+        summaryResponse.setId(report.getId());
+
+        return summaryResponse;
     }
 
     private List<PhaseGroupSummary> calcSummaries(Report report) {
@@ -86,12 +115,5 @@ public class ReportService {
         return summaries;
     }
 
-    public ReportResponse getSingleReport(Long id) throws FileNotFoundException {
-        Optional<Report> optional = reportRepository.findById(id);
-        if(optional.isEmpty()) {
-            throw new FileNotFoundException("Report not found.");
-        }
-        Report report = optional.get();
-        return mapToDto(report);
-    }
+
 }

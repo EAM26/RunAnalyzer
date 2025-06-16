@@ -1,6 +1,7 @@
 package com.eamcode.RunAnalyzer.controller;
 
 import com.eamcode.RunAnalyzer.dto.ReportResponse;
+import com.eamcode.RunAnalyzer.dto.ReportSummaryResponse;
 import com.eamcode.RunAnalyzer.model.Report;
 import com.eamcode.RunAnalyzer.service.ReportService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,11 @@ public class ReportController {
     @GetMapping
     public ResponseEntity<List<ReportResponse>> getReports() {
         return ResponseEntity.ok(reportService.getAllReports());
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<List<ReportSummaryResponse>> getSummaryReports() {
+        return ResponseEntity.ok(reportService.getSummaryReports());
     }
 
     @PostMapping

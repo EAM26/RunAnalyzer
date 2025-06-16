@@ -3,15 +3,14 @@ package com.eamcode.RunAnalyzer.dto;
 import com.eamcode.RunAnalyzer.model.MetaData;
 import lombok.Data;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
-public class ReportResponse {
-
+public class ReportSummaryResponse {
     private Long id;
     private String name;
     private String path;
-    private List<PhaseResponse> phaseResponses;
-    private MetaData metaData;
-    private List<PhaseGroupSummary> summaries;
+    private String distance;
+    private LocalTime duration;
 }

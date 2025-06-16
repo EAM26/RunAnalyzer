@@ -12,6 +12,7 @@ import java.time.LocalTime;
 @Data
 public class PhaseResponse {
 
+
     private Long reportId;
 
     private LocalTime startTime;
