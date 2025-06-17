@@ -44,6 +44,5 @@ public class Analyzer {
         return this.getDataRows().getLast().getTime();
     }
 
-    
 
 }
