@@ -2,16 +2,15 @@ package com.eamcode.RunAnalyzer.service;
 
 import com.eamcode.RunAnalyzer.dto.PhaseRequest;
 import com.eamcode.RunAnalyzer.dto.PhaseResponse;
-import com.eamcode.RunAnalyzer.model.PhaseCategory;
-import com.eamcode.RunAnalyzer.util.Analyzer;
 import com.eamcode.RunAnalyzer.model.Phase;
+import com.eamcode.RunAnalyzer.model.PhaseCategory;
 import com.eamcode.RunAnalyzer.model.Report;
 import com.eamcode.RunAnalyzer.repository.PhaseRepository;
 import com.eamcode.RunAnalyzer.repository.ReportRepository;
+import com.eamcode.RunAnalyzer.util.Analyzer;
 import com.eamcode.RunAnalyzer.util.DurationConverter;
 import com.eamcode.RunAnalyzer.util.SpeedConverter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.Phased;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -21,7 +20,6 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor

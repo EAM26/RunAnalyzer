@@ -30,11 +30,11 @@ public class Analyzer {
             return 0d;
         }
 
-//        Correct time by minus 1 second, because the first measurement is at 00:00:00
-        LocalTime correctedTime = time.minusSeconds(1);
+////        Correct time by minus 1 second, because the first measurement is at 00:00:00
+//        LocalTime correctedTime = time.minusSeconds(1);
         return analyzer.getDataRows()
                 .stream()
-                .filter(item -> item.getTime().equals(correctedTime))
+                .filter(item -> item.getTime().equals(time))
                 .map(DataRow::getDistance)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No value found for time: "));
