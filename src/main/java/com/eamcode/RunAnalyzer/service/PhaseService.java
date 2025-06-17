@@ -25,7 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PhaseService {
 
-    private final PhaseRepository phaseRepository;
     private final ReportRepository reportRepository;
 
     public PhaseResponse createPhase(PhaseRequest request) throws IOException {
@@ -104,9 +103,6 @@ public class PhaseService {
     }
 
     private Phase mapToPhase(Phase phase, PhaseRequest request, Analyzer analyzer) {
-//        Report report = reportRepository.findById(request.getReportId())
-//                .orElseThrow(() -> new NoSuchElementException("Report not found."));
-//        phase.setReport(report);
 
 //        Convert to Duration
         phase.setDuration(DurationConverter.convert(request.getDuration()));
