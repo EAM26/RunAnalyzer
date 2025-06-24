@@ -2,16 +2,15 @@ package com.eamcode.RunAnalyzer.service;
 
 import com.eamcode.RunAnalyzer.dto.PhaseRequest;
 import com.eamcode.RunAnalyzer.dto.PhaseResponse;
-import com.eamcode.RunAnalyzer.model.PhaseCategory;
-import com.eamcode.RunAnalyzer.util.Analyzer;
 import com.eamcode.RunAnalyzer.model.Phase;
+import com.eamcode.RunAnalyzer.model.PhaseCategory;
 import com.eamcode.RunAnalyzer.model.Report;
 import com.eamcode.RunAnalyzer.repository.PhaseRepository;
 import com.eamcode.RunAnalyzer.repository.ReportRepository;
+import com.eamcode.RunAnalyzer.util.Analyzer;
 import com.eamcode.RunAnalyzer.util.DurationConverter;
 import com.eamcode.RunAnalyzer.util.SpeedConverter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.Phased;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -21,23 +20,26 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
 public class PhaseService {
 
-    private final PhaseRepository phaseRepository;
     private final ReportRepository reportRepository;
 
     public PhaseResponse createPhase(PhaseRequest request) throws IOException {
         Report report = reportRepository.findById(request.getReportId())
                 .orElseThrow(() -> new FileNotFoundException("No report found."));
+        Phase phase = new Phase();
+        phase.setReport(report);
         Analyzer analyzer = new Analyzer(report.getPath());
-        Phase phase = mapToPhase(new Phase(), request, analyzer);
-        Phase savedPhase = phaseRepository.save(phase);
-        return mapToResponse(savedPhase);
 
+//        Map request to phase and add to report
+        report.getPhases().add(mapToPhase(phase, request, analyzer));
+
+        report.setRegisteredTime(analyzer.getEndTime());
+        reportRepository.save(report);
+        return mapToResponse(report.getPhases().getLast());
     }
 
     public List<PhaseResponse> createMultiPhase(int multiplier, Long reportId, PhaseCategory category1,
@@ -91,19 +93,16 @@ public class PhaseService {
         }
 
         totalPhases.addAll(phasesCreated);
-        report.setPhases(totalPhases);
 
+        report.setPhases(totalPhases);
+        report.setRegisteredTime(analyzer.getEndTime());
         reportRepository.save(report);
 
 
         return mapToListResponses(report.getPhases());
-
     }
 
     private Phase mapToPhase(Phase phase, PhaseRequest request, Analyzer analyzer) {
-        Report report = reportRepository.findById(request.getReportId())
-                .orElseThrow(() -> new NoSuchElementException("Report not found."));
-        phase.setReport(report);
 
 //        Convert to Duration
         phase.setDuration(DurationConverter.convert(request.getDuration()));
@@ -114,7 +113,6 @@ public class PhaseService {
         phase.setSpeed(SpeedConverter.speedInKmh(phase.getDistance(), phase.getDuration()));
         phase.setHeartRateAvg(calcAvgHeartRate(phase.getStartTime(), phase.getStopTime(), analyzer));
         return phase;
-//        return phaseRepository.save(phase);
     }
 
     public List<PhaseResponse> mapToListResponses(List<Phase> phases) {
@@ -152,24 +150,6 @@ public class PhaseService {
 
     }
 
-//    private int calcAvgHeartRate2(LocalTime start, LocalTime stop, Analyzer analyzer) {
-//        List<Integer> heartRates = new ArrayList<>();
-//        Duration step = Duration.ofSeconds(1);
-//        for(LocalTime time = start; !time.isAfter(stop); time = time.plus(step)) {
-//            analyzer.getDataRows().stream()
-//                    .filter((dataRow)-> dataRow.getTime().truncatedTo(ChronoUnit.SECONDS).equals(time))
-//                    .forEach(dataRow -> heartRates.add(Integer.parseInt(dataRow.getHeartRate())));
-//        }
-//
-//        if(!heartRates.isEmpty()) {
-//            return (int) heartRates.stream()
-//                    .mapToInt(Integer::intValue)
-//                    .average()
-//                    .orElse(0);
-//        } else {
-//            return 0;
-//        }
-//    }
 
     private double calcAvgHeartRate(LocalTime start, LocalTime stop, Analyzer analyzer) {
         return analyzer.getDataRows().stream()

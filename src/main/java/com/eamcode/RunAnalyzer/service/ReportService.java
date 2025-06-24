@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,9 +32,12 @@ public class ReportService {
 
 //        MetaData
         report.setMetaData(CsvUtil.getMetaDataFromCSV(path));
+
         report.setName(report.getMetaData().getDate() + " " + report.getMetaData().getStartTime());
         report.setPath(path);
-        System.out.println("Start Time: " + report.getMetaData().getStartTime());
+
+
+
 
         return reportRepository.save(report);
     }
@@ -70,12 +74,15 @@ public class ReportService {
         response.setPhaseResponses(phaseResponses);
         response.setPath(report.getPath());
         response.setMetaData(report.getMetaData());
+        response.setRegisteredTime(report.getRegisteredTime());
 
         if(!report.getPhases().isEmpty()) {
             response.setSummaries(calcSummaries(report));
+            response.setRemainingDuration(Duration.between(report.getPhases().getLast().getStopTime(), report.getRegisteredTime()));
         }
         return response;
     }
+
 
     private ReportSummaryResponse mapToSummaryResponse(Report report) {
         ReportSummaryResponse summaryResponse = new ReportSummaryResponse();

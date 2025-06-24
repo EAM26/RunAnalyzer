@@ -12,5 +12,5 @@ public class ReportSummaryResponse {
     private String name;
     private String path;
     private String distance;
-    private LocalTime duration;
+    private String duration;
 }
