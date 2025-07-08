@@ -30,7 +30,7 @@ public class ReportController {
     }
 
     @PostMapping
-    public ResponseEntity<Report> createReport(@RequestParam String path) throws IOException {
+    public ResponseEntity<ReportResponse> createReport(@RequestParam String path) throws IOException {
         return ResponseEntity.ok(reportService.createReport(path));
     }
 

@@ -27,7 +27,7 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final PhaseService phaseService;
 
-    public Report createReport(String path) throws IOException {
+    public ReportResponse createReport(String path) throws IOException {
         Report report = new Report();
 
 //        MetaData
@@ -39,7 +39,8 @@ public class ReportService {
 
 
 
-        return reportRepository.save(report);
+        Report createdReport = reportRepository.save(report);
+        return mapToReportResponse(createdReport);
     }
 
     public List<ReportResponse> getAllReports() {
