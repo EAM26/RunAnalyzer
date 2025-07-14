@@ -24,6 +24,11 @@ public class PhaseController {
         return ResponseEntity.ok(phaseService.createPhase(request));
     }
 
+    @GetMapping("/categories")
+    public List<String> getCategories() throws IOException {
+        return phaseService.getCategories();
+    }
+
     @PostMapping("/multi")
     public ResponseEntity<List<PhaseResponse>> addMultiPhase(@RequestParam int multiplier, @RequestParam Long reportId,
                                                      @RequestParam PhaseCategory category1, @RequestParam PhaseCategory category2,
