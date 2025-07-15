@@ -24,6 +24,12 @@ public class PhaseController {
         return ResponseEntity.ok(phaseService.createPhase(request));
     }
 
+    @DeleteMapping("/{reportId}")
+    public ResponseEntity<String> deleteAllPhases(@PathVariable Long reportId)   {
+        phaseService.deleteAllPhases(reportId);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/categories")
     public List<String> getCategories() throws IOException {
         return phaseService.getCategories();
