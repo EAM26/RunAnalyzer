@@ -2,7 +2,6 @@ package com.eamcode.RunAnalyzer.controller;
 
 import com.eamcode.RunAnalyzer.dto.PhaseRequest;
 import com.eamcode.RunAnalyzer.dto.PhaseResponse;
-import com.eamcode.RunAnalyzer.model.Phase;
 import com.eamcode.RunAnalyzer.model.PhaseCategory;
 import com.eamcode.RunAnalyzer.service.PhaseService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,19 @@ public class PhaseController {
 
     @PostMapping
     public ResponseEntity<PhaseResponse> createPhase(@RequestBody PhaseRequest request) throws IOException {
+        System.out.println("Creating phase in controller with request: " + request);
         return ResponseEntity.ok(phaseService.createPhase(request));
+    }
+
+    @DeleteMapping("/{reportId}")
+    public ResponseEntity<String> deleteAllPhases(@PathVariable Long reportId)   {
+        phaseService.deleteAllPhases(reportId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/categories")
+    public List<String> getCategories() {
+        return phaseService.getCategories();
     }
 
     @PostMapping("/multi")

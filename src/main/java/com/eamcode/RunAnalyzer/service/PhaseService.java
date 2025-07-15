@@ -19,13 +19,16 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PhaseService {
 
     private final ReportRepository reportRepository;
+    private final PhaseRepository phaseRepository;
 
     public PhaseResponse createPhase(PhaseRequest request) throws IOException {
         Report report = reportRepository.findById(request.getReportId())
@@ -162,6 +165,13 @@ public class PhaseService {
                 .orElse(0);
     }
 
+    public List<String> getCategories() {
+        return Arrays.stream(PhaseCategory.values()).map(PhaseCategory::name).collect(Collectors.toList());
+    }
+
+    public void deleteAllPhases(Long reportId) {
+        phaseRepository.deleteAll(phaseRepository.findAllByReportId(reportId));
+    }
 }
 
 

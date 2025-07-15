@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PhaseRepository extends JpaRepository<Phase, Long> {
+    Iterable<? extends Phase> findAllByReportId(Long reportId);
 }

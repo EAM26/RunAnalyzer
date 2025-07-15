@@ -30,12 +30,21 @@ public class ReportController {
     }
 
     @PostMapping
-    public ResponseEntity<Report> createReport(@RequestParam String path) throws IOException {
+    public ResponseEntity<ReportResponse> createReport(@RequestParam String path) throws IOException {
         return ResponseEntity.ok(reportService.createReport(path));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ReportResponse> getReport(@PathVariable Long id) throws FileNotFoundException {
         return ResponseEntity.ok(reportService.getSingleReport(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteReport(@PathVariable Long id)  {
+        if(reportService.deleteReport(id)) {
+            return ResponseEntity.ok("Report deleted successfully.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
