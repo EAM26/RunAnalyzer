@@ -125,4 +125,11 @@ public class ReportService {
     }
 
 
+    public boolean deleteReport(Long id) {
+        if(reportRepository.existsById(id)) {
+            reportRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }

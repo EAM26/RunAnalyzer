@@ -38,4 +38,13 @@ public class ReportController {
     public ResponseEntity<ReportResponse> getReport(@PathVariable Long id) throws FileNotFoundException {
         return ResponseEntity.ok(reportService.getSingleReport(id));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteReport(@PathVariable Long id)  {
+        if(reportService.deleteReport(id)) {
+            return ResponseEntity.ok("Report deleted successfully.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
