@@ -14,6 +14,10 @@ public class Analyzer {
 
     public Analyzer(String path) throws IOException {
         this.setDataRows(CsvUtil.getDataRowsFromCsv(path));
+        System.out.println("***********************************");
+//        System.out.println(this.dataRows);
+        System.out.println("Analyzer running");
+        System.out.println("***********************************");
     }
 
     private List<DataRow> dataRows;

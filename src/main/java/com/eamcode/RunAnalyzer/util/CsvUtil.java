@@ -40,6 +40,7 @@ public class CsvUtil {
                 case "Total distance (km)" -> metaData.setTotalDistance(value);
                 case "Average speed (km/h)" -> metaData.setSpeedAvg(value);
                 case "Average heart rate (bpm)" -> metaData.setHeartRateAvg(value);
+                case "Average cadence (rpm)" -> metaData.setCadenceAvg(value);
             }
         }
         return metaData;

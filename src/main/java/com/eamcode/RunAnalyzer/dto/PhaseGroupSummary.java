@@ -13,4 +13,5 @@ public class PhaseGroupSummary {
     private Duration totalDuration = Duration.ZERO;
     private double averageSpeed;
     private double averageHeartRate;
+    private double averageCadence;
 }

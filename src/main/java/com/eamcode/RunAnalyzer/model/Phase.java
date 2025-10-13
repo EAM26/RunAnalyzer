@@ -30,5 +30,6 @@ public class Phase {
     private Double speed;
     private Duration duration;
     private double heartRateAvg;
+    private double cadenceAvg;
 
 }

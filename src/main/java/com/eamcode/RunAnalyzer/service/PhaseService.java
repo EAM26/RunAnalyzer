@@ -92,6 +92,9 @@ public class PhaseService {
 
 //            Phase HearRate
             phase.setHeartRateAvg(calcAvgHeartRate(phase.getStartTime(), phase.getStopTime(), analyzer));
+
+//            Phase Cadence
+            phase.setCadenceAvg(calcAvgCadence(phase.getStartTime(), phase.getStopTime(), analyzer));
             phasesCreated.add(phase);
         }
 
@@ -115,6 +118,7 @@ public class PhaseService {
         phase.setDistance(analyzer.calcPhaseDistance(phase));
         phase.setSpeed(SpeedConverter.speedInKmh(phase.getDistance(), phase.getDuration()));
         phase.setHeartRateAvg(calcAvgHeartRate(phase.getStartTime(), phase.getStopTime(), analyzer));
+        phase.setCadenceAvg(calcAvgCadence(phase.getStartTime(), phase.getStopTime(), analyzer));
         return phase;
     }
 
@@ -134,6 +138,7 @@ public class PhaseService {
         response.setSpeed(phase.getSpeed());
         response.setDuration(phase.getDuration());
         response.setHeartRateAvg(phase.getHeartRateAvg());
+        response.setCadenceAvg(phase.getCadenceAvg());
 
         return response;
     }
@@ -161,6 +166,17 @@ public class PhaseService {
                     return (!t.isBefore(start)) && (!t.isAfter(stop));
                 })
                 .mapToDouble(dataRow -> Double.parseDouble(dataRow.getHeartRate()))
+                .average()
+                .orElse(0);
+    }
+
+    private double calcAvgCadence(LocalTime start, LocalTime stop, Analyzer analyzer) {
+        return analyzer.getDataRows().stream()
+                .filter(dataRow -> {
+                    LocalTime t = dataRow.getTime().truncatedTo(ChronoUnit.SECONDS);
+                    return (!t.isBefore(start)) && (!t.isAfter(stop));
+                })
+                .mapToDouble(dataRow -> Double.parseDouble(dataRow.getCadence()))
                 .average()
                 .orElse(0);
     }
