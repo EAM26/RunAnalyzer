@@ -15,6 +15,8 @@ public class DataRow {
     private LocalTime time;
     @CsvBindByName(column = "HR (bpm)")
     private String heartRate;
+    @CsvBindByName(column = "Cadence")
+    private String cadence;
     @CsvBindByName(column = "Distances (m)")
     private Double distance;
 
