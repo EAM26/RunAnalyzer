@@ -34,7 +34,7 @@ public class Analyzer {
             return 0d;
         }
 
-////        Correct time by minus 1 second, because the first measurement is at 00:00:00
+//        Correct time by minus 1 second, because the first measurement is at 00:00:00
 //        LocalTime correctedTime = time.minusSeconds(1);
         return analyzer.getDataRows()
                 .stream()

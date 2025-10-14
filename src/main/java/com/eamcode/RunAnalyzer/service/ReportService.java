@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +35,6 @@ public class ReportService {
         report.setPath(path);
 
 
-
-
         Report createdReport = reportRepository.save(report);
         return mapToReportResponse(createdReport);
     }
@@ -52,7 +48,7 @@ public class ReportService {
 
     public ReportResponse getSingleReport(Long id) throws FileNotFoundException {
         Optional<Report> optional = reportRepository.findById(id);
-        if(optional.isEmpty()) {
+        if (optional.isEmpty()) {
             throw new FileNotFoundException("Report not found.");
         }
         Report report = optional.get();
@@ -77,7 +73,7 @@ public class ReportService {
         response.setMetaData(report.getMetaData());
         response.setRegisteredTime(report.getRegisteredTime());
 
-        if(!report.getPhases().isEmpty()) {
+        if (!report.getPhases().isEmpty()) {
             response.setSummaries(calcSummaries(report));
             response.setRemainingDuration(Duration.between(report.getPhases().getLast().getStopTime(), report.getRegisteredTime()));
         }
@@ -100,21 +96,31 @@ public class ReportService {
 
     private List<PhaseGroupSummary> calcSummaries(Report report) {
         List<PhaseGroupSummary> summaries = new ArrayList<>();
-        for(PhaseCategory category: PhaseCategory.values()) {
+        for (PhaseCategory category : PhaseCategory.values()) {
             PhaseGroupSummary summary = new PhaseGroupSummary();
-            List<Double> allHeartRates = new ArrayList<>();
+            List<Double> allCadences = new ArrayList<>();
+            Map<Long, Double> weightedHeartRate = new HashMap<>();
+            Map<Long, Double> weightedCadence = new HashMap<>();
             summary.setCategory(category);
-            for(Phase phase: report.getPhases()) {
-                if(category.equals(phase.getCategory())) {
+            for (Phase phase : report.getPhases()) {
+                if (category.equals(phase.getCategory())) {
                     summary.setTotalDistance(summary.getTotalDistance() + phase.getDistance());
                     summary.setTotalDuration(summary.getTotalDuration().plus(phase.getDuration()));
-                    allHeartRates.add(phase.getHeartRateAvg());
+                    weightedHeartRate.put(phase.getDuration().toSeconds(), phase.getHeartRateAvg() * phase.getDuration().toSeconds());
+                    weightedCadence.put(phase.getDuration().toSeconds(), phase.getCadenceAvg() * phase.getDuration().toSeconds());
+
+                    allCadences.add(phase.getCadenceAvg());
                 }
             }
             summary.setAverageSpeed(SpeedConverter.speedInKmh(summary.getTotalDistance(),
                     summary.getTotalDuration()));
 
-            summary.setAverageHeartRate(allHeartRates.stream()
+            summary.setAverageHeartRate(calculateAverageWeighedBySeconds(weightedHeartRate));
+
+
+
+
+            summary.setAverageCadence(allCadences.stream()
                     .mapToDouble(Double::doubleValue)
                     .average()
                     .orElse(0));
@@ -122,14 +128,22 @@ public class ReportService {
             summaries.add(summary);
         }
         return summaries;
+
     }
 
 
     public boolean deleteReport(Long id) {
-        if(reportRepository.existsById(id)) {
+        if (reportRepository.existsById(id)) {
             reportRepository.deleteById(id);
             return true;
         }
         return false;
+    }
+
+    private Double calculateAverageWeighedBySeconds(Map<Long, Double> map) {
+        Double sumKeys =  map.keySet().stream().mapToDouble(Long::longValue).sum();
+        Double sumValues =  map.values().stream().mapToDouble(Double::doubleValue).sum();
+
+        return sumValues / sumKeys;
     }
 }
